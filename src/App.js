@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from 'react-native';
+import MainPage from "./components/MainPage";
 
 export default function App() {
 
@@ -21,9 +22,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>
-        {status.toString()}
-      </Text>
+        <MainPage/>
     </View>
   );
   
