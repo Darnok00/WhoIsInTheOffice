@@ -7,14 +7,19 @@ import {
   descriptionPositive,
   dictCharactersImages,
   optionsCharacters,
+  defaultCharacter
 } from "../constants/MainPageConstants";
 
 const windowWidth = Dimensions.get("window").width;
 
 export default function MainPage() {
   const [status, setStatus] = useState(false);
-  const [selectedPerson, setSelectedPerson] = useState("lewandowski");
-  const [mainImg, setMainImg] = useState("../assets/images/lewandowski.jpg")
+  const [selectedPerson, setSelectedPerson] = useState(defaultCharacter);
+  const [mainImg, setMainImg] = useState(dictCharactersImages[defaultCharacter]);
+
+  const mainImageStyle = status === true ? styles.imageGreen : styles.imageRed;
+  const descriptionText =
+    status === true ? descriptionPositive : descriptionNegative;
 
   const fetchStatus = async () => {
     const response = await fetch("https://testitp.best.krakow.pl/status", {
@@ -30,11 +35,8 @@ export default function MainPage() {
   }, []);
 
   useEffect(() => {
-    setMainImg(dictCharactersImages[selectedPerson]);
-    console.log(mainImg);
+    setMainImg(Number(dictCharactersImages[selectedPerson]));
   }, [selectedPerson]);
-
-
 
   return (
     <View style={styles.container}>
@@ -44,37 +46,14 @@ export default function MainPage() {
           style={pickerSelectStyles}
           useNativeAndroidPickerStyle={false}
           onValueChange={(itemValue, itemIndex) => setSelectedPerson(itemValue)}
-          placeholder={{ label: descriptionPlaceholder, value: null }}
+          placeholder={{ label: descriptionPlaceholder, value: defaultCharacter}}
           items={optionsCharacters}
         />
       </View>
       <View style={styles.containerImage}>
-        {status === true ? (
-          <React.Fragment>
-            <Image
-              source={mainImg}
-              style={[styles.image, styles.imageGreen]}
-              itemStyle={{}}
-            />
-            <Image
-              source={mainImg}
-              style={[styles.image, styles.imageSecond]}
-            />
-            <Text style={styles.text}>{descriptionPositive.toString()}</Text>
-          </React.Fragment>
-        ) : (
-          <React.Fragment>
-            <Image
-              source={mainImg}
-              style={[styles.image, styles.imageRed]}
-            />
-            <Image
-              source={mainImg}
-              style={[styles.image, styles.imageSecond]}
-            />
-            <Text style={styles.text}>{descriptionNegative.toString()}</Text>
-          </React.Fragment>
-        )}
+        <Image source={mainImg} style={[styles.image, mainImageStyle]} />
+        <Image source={mainImg} style={[styles.image, styles.imageSecond]} />
+        <Text style={styles.text}>{descriptionText.toString()}</Text>
       </View>
     </View>
   );
