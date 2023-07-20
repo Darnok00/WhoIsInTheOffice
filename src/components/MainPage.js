@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Image, View, Text } from "react-native";
+import { StyleSheet, Image, View, Text, Dimensions } from "react-native";
+import RNPickerSelect from "react-native-picker-select";
+import {
+  descriptionNegative,
+  descriptionPlaceholder,
+  descriptionPositive,
+  dictCharactersImages,
+  optionsCharacters,
+} from "../constants/MainPageConstants";
+
+const windowWidth = Dimensions.get("window").width;
 
 export default function MainPage() {
-  const description_negative = "Biuro puste :(";
-  const description_positive = "Biuro otwarte :D";
-
   const [status, setStatus] = useState(false);
+  const [selectedPerson, setSelectedPerson] = useState("lewandowski");
+  const [mainImg, setMainImg] = useState("../assets/images/lewandowski.jpg")
 
   const fetchStatus = async () => {
     const response = await fetch("https://testitp.best.krakow.pl/status", {
@@ -20,32 +29,50 @@ export default function MainPage() {
     fetchStatus();
   }, []);
 
+  useEffect(() => {
+    setMainImg(dictCharactersImages[selectedPerson]);
+    console.log(mainImg);
+  }, [selectedPerson]);
+
+
+
   return (
     <View style={styles.container}>
-      <View style={styles.container}>
+      <View style={styles.containerPicker}>
+        <RNPickerSelect
+          selectedValue={selectedPerson}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
+          onValueChange={(itemValue, itemIndex) => setSelectedPerson(itemValue)}
+          placeholder={{ label: descriptionPlaceholder, value: null }}
+          items={optionsCharacters}
+        />
+      </View>
+      <View style={styles.containerImage}>
         {status === true ? (
           <React.Fragment>
             <Image
-              source={require("../assets/images/lewandowski.jpeg")}
-              style={[styles.image, styles.image_green]}
+              source={mainImg}
+              style={[styles.image, styles.imageGreen]}
+              itemStyle={{}}
             />
             <Image
-              source={require("../assets/images/lewandowski.jpeg")}
-              style={[styles.image, styles.image_second]}
+              source={mainImg}
+              style={[styles.image, styles.imageSecond]}
             />
-            <Text style={styles.text}>{description_positive.toString()}</Text>
+            <Text style={styles.text}>{descriptionPositive.toString()}</Text>
           </React.Fragment>
         ) : (
           <React.Fragment>
             <Image
-              source={require("../assets/images/lewandowski.jpeg")}
-              style={[styles.image, styles.image_red]}
+              source={mainImg}
+              style={[styles.image, styles.imageRed]}
             />
             <Image
-              source={require("../assets/images/lewandowski.jpeg")}
-              style={[styles.image, styles.image_second]}
+              source={mainImg}
+              style={[styles.image, styles.imageSecond]}
             />
-            <Text style={styles.text}>{description_negative.toString()}</Text>
+            <Text style={styles.text}>{descriptionNegative.toString()}</Text>
           </React.Fragment>
         )}
       </View>
@@ -55,7 +82,18 @@ export default function MainPage() {
 
 const styles = StyleSheet.create({
   container: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  containerPicker: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#002B5B",
+    width: windowWidth,
+  },
+  containerImage: {
+    flex: 5,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -63,26 +101,45 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  image_red: {
+  imageRed: {
     tintColor: "red",
     position: "absolute",
   },
-  image_green: {
+  imageGreen: {
     tintColor: "green",
     position: "absolute",
   },
-  image_second: {
+  imageSecond: {
     position: "absolute",
     opacity: 0.6,
   },
   text: {
-    fontSize: 40,
-    fontWeight: "bold",
+    fontSize: 30,
     position: "absolute",
-    top: "80%",
+    top: "70%",
+    textAlignVertical: "center",
     color: "white",
-    backgroundColor: "black",
-    width: "100%",
+    backgroundColor: "#78C1F3",
+    width: "80%",
+    height: "12%",
+    borderWidth: 1,
     textAlign: "center",
+    borderRadius: 80,
+  },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputAndroid: {
+    fontSize: 30,
+    textAlign: "center",
+    borderWidth: 1,
+    borderRadius: 80,
+    borderColor: "white",
+    backgroundColor: "#78C1F3",
+    color: "white",
+    paddingLeft: 80,
+    paddingRight: 80,
+    paddingBottom: 10,
+    paddingTop: 10,
   },
 });
