@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Image, View, Text, Dimensions } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   descriptionNegative,
   descriptionPlaceholder,
   descriptionPositive,
   dictCharactersImages,
   optionsCharacters,
-  defaultCharacter
+  defaultCharacter,
 } from "../constants/MainPageConstants";
 
 const windowWidth = Dimensions.get("window").width;
@@ -15,7 +16,9 @@ const windowWidth = Dimensions.get("window").width;
 export default function MainPage() {
   const [status, setStatus] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(defaultCharacter);
-  const [mainImg, setMainImg] = useState(dictCharactersImages[defaultCharacter]);
+  const [mainImg, setMainImg] = useState(
+    dictCharactersImages[defaultCharacter]
+  );
 
   const mainImageStyle = status === true ? styles.imageGreen : styles.imageRed;
   const descriptionText =
@@ -27,30 +30,45 @@ export default function MainPage() {
     });
     const data = await response.json();
     setStatus(data);
-    console.log(status);
+  };
+
+  const storeSelectedPerson = async (person) => {
+    await AsyncStorage.setItem("@selectedPerson", person);
+  };
+
+  const retrieveSelectedPerson = async () => {
+    const storedPerson = await AsyncStorage.getItem("@selectedPerson");
+    if (storedPerson !== null) {
+      setSelectedPerson(storedPerson);
+    }
   };
 
   useEffect(() => {
     fetchStatus();
+    retrieveSelectedPerson();
   }, []);
 
   useEffect(() => {
     setMainImg(Number(dictCharactersImages[selectedPerson]));
+    storeSelectedPerson(selectedPerson);
   }, [selectedPerson]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.containerPicker}>
+      <View style={[styles.container, styles.containerPicker]}>
         <RNPickerSelect
           selectedValue={selectedPerson}
           style={pickerSelectStyles}
           useNativeAndroidPickerStyle={false}
           onValueChange={(itemValue, itemIndex) => setSelectedPerson(itemValue)}
-          placeholder={{ label: descriptionPlaceholder, value: defaultCharacter}}
+          placeholder={{
+            label: descriptionPlaceholder,
+            value: defaultCharacter,
+          }}
           items={optionsCharacters}
         />
       </View>
-      <View style={styles.containerImage}>
+      <View style={[styles.container, styles.containerImage]}>
         <Image source={mainImg} style={[styles.image, mainImageStyle]} />
         <Image source={mainImg} style={[styles.image, styles.imageSecond]} />
         <Text style={styles.text}>{descriptionText.toString()}</Text>
@@ -66,15 +84,11 @@ const styles = StyleSheet.create({
   },
   containerPicker: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#002B5B",
     width: windowWidth,
   },
   containerImage: {
     flex: 5,
-    justifyContent: "center",
-    alignItems: "center",
   },
   image: {
     width: "100%",
