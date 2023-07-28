@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Image, View, Text, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  View,
+  Text,
+  Dimensions,
+  Pressable,
+  ImageBackground,
+} from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   descriptionNegative,
-  descriptionPlaceholder,
   descriptionPositive,
   dictCharactersImages,
   optionsCharacters,
@@ -25,11 +32,19 @@ export default function MainPage() {
     status === true ? descriptionPositive : descriptionNegative;
 
   const fetchStatus = async () => {
-    const response = await fetch("https://testitp.best.krakow.pl/status", {
-      method: "GET",
-    });
-    const data = await response.json();
-    setStatus(data);
+    try {
+      const response = await fetch("https://testitp.best.krakow.pl/status", {
+        method: "GET",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setStatus(true);
+      } else {
+        console.error("Status response not OK:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching status:", error.message);
+    }
   };
 
   const storeSelectedPerson = async (person) => {
@@ -55,24 +70,35 @@ export default function MainPage() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.container, styles.containerPicker]}>
-        <RNPickerSelect
-          selectedValue={selectedPerson}
-          style={pickerSelectStyles}
-          useNativeAndroidPickerStyle={false}
-          onValueChange={(itemValue, itemIndex) => setSelectedPerson(itemValue)}
-          placeholder={{
-            label: descriptionPlaceholder,
-            value: defaultCharacter,
-          }}
-          items={optionsCharacters}
-        />
-      </View>
-      <View style={[styles.container, styles.containerImage]}>
-        <Image source={mainImg} style={[styles.image, mainImageStyle]} />
-        <Image source={mainImg} style={[styles.image, styles.imageSecond]} />
-        <Text style={styles.text}>{descriptionText.toString()}</Text>
-      </View>
+      <ImageBackground
+        source={require("../assets/icons/splash.png")}
+        resizeMode="cover"
+      >
+        <View style={[styles.container, styles.containerPicker]}>
+          <RNPickerSelect
+            selectedValue={selectedPerson}
+            value={selectedPerson}
+            style={pickerSelectStyles}
+            useNativeAndroidPickerStyle={false}
+            onValueChange={(itemValue, itemIndex) =>
+              setSelectedPerson(itemValue)
+            }
+            placeholder={{}}
+            items={optionsCharacters}
+          />
+          <Pressable onPress={fetchStatus} style={styles.presser}>
+            <Image
+              style={styles.refreshButton}
+              source={require("../assets/images/img.webp")}
+            />
+          </Pressable>
+        </View>
+        <View style={[styles.container, styles.containerImage]}>
+          <Image source={mainImg} style={[styles.image, mainImageStyle]} />
+          <Image source={mainImg} style={[styles.image, styles.imageSecond]} />
+          <Text style={styles.text}>{descriptionText.toString()}</Text>
+        </View>
+      </ImageBackground>
     </View>
   );
 }
@@ -84,8 +110,13 @@ const styles = StyleSheet.create({
   },
   containerPicker: {
     flex: 1,
-    backgroundColor: "#002B5B",
+    backgroundColor: "transparent",
     width: windowWidth,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: "5%",
+    paddingRight: "15%",
   },
   containerImage: {
     flex: 5,
@@ -119,8 +150,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     borderRadius: 80,
   },
+  refreshButton: {
+    width: "100%",
+    height: "100%",
+  },
+  presser: {
+    width: "19.8%",
+    height: "55%",
+  },
 });
-
 const pickerSelectStyles = StyleSheet.create({
   inputAndroid: {
     fontSize: 30,
@@ -130,8 +168,8 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: "white",
     backgroundColor: "#78C1F3",
     color: "white",
-    paddingLeft: 80,
-    paddingRight: 80,
+    paddingLeft: 50,
+    paddingRight: 50,
     paddingBottom: 10,
     paddingTop: 10,
   },

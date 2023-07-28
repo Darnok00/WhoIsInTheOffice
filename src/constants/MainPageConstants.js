@@ -5,7 +5,7 @@ export const descriptionPositive = "Biuro otwarte :D";
 export const descriptionPlaceholder = "Wybierz herosa";
 
 export const optionsCharacters = [
-  { label: "Lewandowski", value: "lewandowski" },
+  { label: "Robercik", value: "lewandowski" },
   { label: "Małysz", value: "malysz" },
   { label: "Sochan", value: "sochan" },
   { label: "Świątek", value: "swiatek" },

@@ -4,11 +4,11 @@
     "slug": "WhoIsInTheOffice",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./src/assets/icons/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./src/assets/icons/splash.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
@@ -19,12 +19,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/icons/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.darnok00.WhoIsInTheOffice"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./src/assets/icons/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d4f26543-f202-49a0-9e4d-bb486be794a8"
+      }
     }
   }
 }
