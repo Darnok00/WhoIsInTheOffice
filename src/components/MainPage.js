@@ -38,7 +38,7 @@ export default function MainPage() {
       });
       if (response.ok) {
         const data = await response.json();
-        setStatus(true);
+        setStatus(data);
       } else {
         console.error("Status response not OK:", response.status);
       }
