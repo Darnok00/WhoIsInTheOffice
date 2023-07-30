@@ -9,7 +9,6 @@ This is a mobile application for android devices developed for members of the BE
 ## Setup 
 Clone this repo to your desktop, go to its root directory and run  `yarn install` to install all the dependencies.
 
-Then run `yarn create expo` to install the expo, which is helpful in the set up of the application.
 
 ## Usage 
 Once you've installed the expo and the dependency, you can launch the android device emulator, e.g. via Android Studio, and run `yarn expo start`. Then press `a` to run the application on the Android emulator. 
