@@ -11,7 +11,7 @@ Clone this repo to your desktop, go to its root directory and run  `yarn install
 
 
 ## Usage 
-Once you've installed the expo and the dependency, you can launch the android device emulator, e.g. via Android Studio, and run `yarn expo start`. Then press `a` to run the application on the Android emulator. 
+Once you've installed the dependencies, you can launch the android device emulator, e.g. via Android Studio, and run `yarn expo start`. Then press `a` to run the application on the Android emulator. 
 
 ## Used technologies
 - React Native
