@@ -27,6 +27,7 @@ export default function MainPage() {
   const [status, setStatus] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(defaultCharacter);
   const [refreshing, setRefreshing] = useState(false);
+  const [errorStatus, setErrorStatus] = useState(false);
   const [mainImg, setMainImg] = useState(
     dictCharactersImages[defaultCharacter]
   );
@@ -44,12 +45,14 @@ export default function MainPage() {
         const data = await response.json();
         setStatus(data);
         setDescrpitionText(
-          status === true ? descriptionPositive : descriptionNegative
+          data === true ? descriptionPositive : descriptionNegative
         );
+        setErrorStatus(false);
       } else {
         setMainImg(dictCharactersImages["error"]);
         setDescrpitionText(errorDescription);
         console.error("Status response not OK:", response.status);
+        setErrorStatus(true);
       }
     } catch (error) {
       console.error("Error fetching status:", error.message);
@@ -91,7 +94,9 @@ export default function MainPage() {
           source={require("../assets/icons/splash.png")}
           resizeMode="cover"
         >
+          
           <View style={[styles.container, styles.containerPicker]}>
+            {!errorStatus ? (
             <RNPickerSelect
               selectedValue={selectedPerson}
               value={selectedPerson}
@@ -102,7 +107,7 @@ export default function MainPage() {
               }
               placeholder={{}}
               items={optionsCharacters}
-            />
+            />) : null}
           </View>
           <View style={[styles.container, styles.containerImage]}>
             <Image source={mainImg} style={[styles.image, mainImageStyle]} />
