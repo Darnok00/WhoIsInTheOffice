@@ -7,6 +7,8 @@ import {
   Dimensions,
   Pressable,
   ImageBackground,
+  RefreshControl,
+  ScrollView,
 } from "react-native";
 import RNPickerSelect from "react-native-picker-select";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,6 +18,7 @@ import {
   dictCharactersImages,
   optionsCharacters,
   defaultCharacter,
+  errorDescription,
 } from "../constants/MainPageConstants";
 
 const windowWidth = Dimensions.get("window").width;
@@ -23,27 +26,35 @@ const windowWidth = Dimensions.get("window").width;
 export default function MainPage() {
   const [status, setStatus] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(defaultCharacter);
+  const [refreshing, setRefreshing] = useState(false);
   const [mainImg, setMainImg] = useState(
     dictCharactersImages[defaultCharacter]
   );
+  const [descriptionText, setDescrpitionText] = useState(descriptionNegative);
 
   const mainImageStyle = status === true ? styles.imageGreen : styles.imageRed;
-  const descriptionText =
-    status === true ? descriptionPositive : descriptionNegative;
 
   const fetchStatus = async () => {
     try {
+      setRefreshing(true);
       const response = await fetch("https://testitp.best.krakow.pl/status", {
         method: "GET",
       });
       if (response.ok) {
         const data = await response.json();
         setStatus(data);
+        setDescrpitionText(
+          status === true ? descriptionPositive : descriptionNegative
+        );
       } else {
+        setMainImg(dictCharactersImages["error"]);
+        setDescrpitionText(errorDescription);
         console.error("Status response not OK:", response.status);
       }
     } catch (error) {
       console.error("Error fetching status:", error.message);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -69,37 +80,41 @@ export default function MainPage() {
   }, [selectedPerson]);
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("../assets/icons/splash.png")}
-        resizeMode="cover"
-      >
-        <View style={[styles.container, styles.containerPicker]}>
-          <RNPickerSelect
-            selectedValue={selectedPerson}
-            value={selectedPerson}
-            style={pickerSelectStyles}
-            useNativeAndroidPickerStyle={false}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedPerson(itemValue)
-            }
-            placeholder={{}}
-            items={optionsCharacters}
-          />
-          <Pressable onPress={fetchStatus} style={styles.presser}>
-            <Image
-              style={styles.refreshButton}
-              source={require("../assets/images/img.webp")}
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={fetchStatus} />
+      }
+    >
+      <View style={styles.container}>
+        <ImageBackground
+          source={require("../assets/icons/splash.png")}
+          resizeMode="cover"
+        >
+          <View style={[styles.container, styles.containerPicker]}>
+            <RNPickerSelect
+              selectedValue={selectedPerson}
+              value={selectedPerson}
+              style={pickerSelectStyles}
+              useNativeAndroidPickerStyle={false}
+              onValueChange={(itemValue, itemIndex) =>
+                setSelectedPerson(itemValue)
+              }
+              placeholder={{}}
+              items={optionsCharacters}
             />
-          </Pressable>
-        </View>
-        <View style={[styles.container, styles.containerImage]}>
-          <Image source={mainImg} style={[styles.image, mainImageStyle]} />
-          <Image source={mainImg} style={[styles.image, styles.imageSecond]} />
-          <Text style={styles.text}>{descriptionText.toString()}</Text>
-        </View>
-      </ImageBackground>
-    </View>
+          </View>
+          <View style={[styles.container, styles.containerImage]}>
+            <Image source={mainImg} style={[styles.image, mainImageStyle]} />
+            <Image
+              source={mainImg}
+              style={[styles.image, styles.imageSecond]}
+            />
+            <Text style={styles.text}>{descriptionText.toString()}</Text>
+          </View>
+        </ImageBackground>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -107,35 +122,38 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
+    flex: 1,
   },
   containerPicker: {
-    flex: 1,
-    backgroundColor: "transparent",
+    backgroundColor: "#D76A03",
     width: windowWidth,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingLeft: "5%",
-    paddingRight: "15%",
+    paddingLeft: "10%",
+    paddingRight: "10%",
   },
   containerImage: {
-    flex: 5,
+    flex: 7,
+  },
+  scrollContainer: {
+    flexGrow: 1,
   },
   image: {
     width: "100%",
     height: "100%",
   },
   imageRed: {
-    tintColor: "red",
+    tintColor: "#BF3100",
     position: "absolute",
   },
   imageGreen: {
-    tintColor: "green",
+    tintColor: "#8EA604",
     position: "absolute",
   },
   imageSecond: {
     position: "absolute",
-    opacity: 0.6,
+    opacity: 0.5,
   },
   text: {
     fontSize: 30,
@@ -143,12 +161,11 @@ const styles = StyleSheet.create({
     top: "70%",
     textAlignVertical: "center",
     color: "white",
-    backgroundColor: "#78C1F3",
-    width: "80%",
+    backgroundColor: "#EC9F05",
+    width: "100%",
     height: "12%",
     borderWidth: 1,
     textAlign: "center",
-    borderRadius: 80,
   },
   refreshButton: {
     width: "100%",
@@ -165,12 +182,11 @@ const pickerSelectStyles = StyleSheet.create({
     textAlign: "center",
     borderWidth: 1,
     borderRadius: 80,
-    borderColor: "white",
-    backgroundColor: "#78C1F3",
+    backgroundColor: "#F5BB00",
     color: "white",
-    paddingLeft: 50,
-    paddingRight: 50,
     paddingBottom: 10,
     paddingTop: 10,
+    width: windowWidth * 0.8,
+    top: "20%",
   },
 });

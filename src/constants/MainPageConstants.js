@@ -16,6 +16,8 @@ export const dictCharactersImages = {
   lewandowski: require("../assets/images/lewandowski.jpg"),
   malysz: require("../assets/images/malysz.jpg"),
   swiatek: require("../assets/images/swiatek.jpg"),
+  error: require("../assets/images/error.jpg")
 };
 
 export const defaultCharacter = "lewandowski"
+export const errorDescription = "Problem z serwerem!"
