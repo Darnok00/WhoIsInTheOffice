@@ -4,7 +4,11 @@ This is a mobile application for android devices developed for members of the BE
 ## Features
 - You can choose one of the available avatars to display as a background to the office status information. 
 
-- There's also a refresh button so you can make sure the office status currently displayed is up to date. 
+- The selected avatar will be remembered when you close the app, so you won't have to select it again. 
+
+- Application provides pull and refresh option so you can make sure the office status currently displayed is up to date. 
+
+- If there are problems with the server providing information about the status of the office, a corresponding message will be displayed. 
 
 ## Setup 
 Clone this repo to your desktop, go to its root directory and run  `yarn install` to install all the dependencies.
